@@ -1,21 +1,11 @@
-authors = [
-    {
-        "name": "steven king",
-        "genre": "Horror"
-    },
-    {
-        "name": "rudyard kipling",
-        "genre": "Adventure"
-    },
-    {
-        "name": "issac asimov",
-        "genre": "Science Fiction"
-    },
-    {
-        "name": "suzanne collins",
-        "genre": "YA Fiction"
-    }
-]
+from dateutil import parser
+
+authors = {
+    "steven king": "Horror",
+    "rudyard kipling": "Adventure",
+    "issac asimov": "Science Fiction",
+    "suzanne collins": "YA Fiction"
+}
 
 
 class Book:
@@ -24,15 +14,6 @@ class Book:
         self.dateOfPublication = dateOfPublication
         self.numberOfPages = numberOfPages
         self.author = author
-
-    def getObjects(self):
-        bookObject = {
-            "title": self.title,
-            "dateOfPublication": self.dateOfPublication,
-            "author": self.author,
-            "numberOfPages": self.numberOfPages
-        }
-        return bookObject
 
 
 splitInputByBook = []
@@ -43,15 +24,7 @@ while True:
     if userInput == "":
         splitInputByBook.pop()
         break
-print("ser input:", splitInputByBook)
-
-
-def getbookArrayByDetails(book):
-    return Book(book[0], book[1], book[2], book[3])
-
-
-bookclass = (getbookArrayByDetails(["title", "date", "pages", "author"]))
-print(bookclass.getObjects())
+print("User input:", splitInputByBook)
 
 
 def parseInput(userInput):
@@ -61,10 +34,52 @@ def parseInput(userInput):
         #booksArray = filter(lambda book: book.split(","),splitInputByBook)
         booksArray = []
         for book in userInput:
-            booksArray.append(book.split(","))
-        print("booksarray:", list(booksArray))
-        booksArrayByDetails = map(getbookArrayByDetails, booksArray)
-        print(booksArrayByDetails)
+            tempList = book.split(",")
+            if len(tempList) == 4:
+                booksArray.append(tempList)
+        if len(booksArray) == 0:
+            raise ValueError("Invalid Input")
+        booksArrayByDetails = []
+        for book in booksArray:
+            booksArrayByDetails.append(
+                Book(book[0], book[1], book[2], book[3]))
+        return booksArrayByDetails
 
 
-parseInput(splitInputByBook)
+books = parseInput(splitInputByBook)
+print(books)
+
+
+def findAuthorWithMostBooks(books):
+    dictionary = {}
+    for book in books:
+        if book.author not in dictionary:
+            dictionary[book.author] = 1
+        else:
+            dictionary[book.author] += 1
+    maxNumberOfBooks = max(dictionary.values())
+    for author in dictionary:
+        if dictionary[author] == maxNumberOfBooks:
+            return author
+
+
+mostBooksAuthor = findAuthorWithMostBooks(books)
+print(mostBooksAuthor, "type:", type(mostBooksAuthor))
+
+
+def findOldestBook(books):
+    neededBook = books[0]
+    oldestBook = parser.parse("12/31/2500")
+    for book in books:
+        currentDate = parser.parse(book.dateOfPublication)
+        if currentDate < oldestBook:
+            oldestBook = currentDate
+            neededBook = book
+    return neededBook
+
+
+neededBook = findOldestBook(books)
+
+genre = authors[mostBooksAuthor.lower()]
+
+print(f"{neededBook.title}, written by {genre} writer {neededBook.author} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
