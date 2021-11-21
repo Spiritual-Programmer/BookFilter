@@ -3,7 +3,7 @@ from dateutil import parser
 authors = {
     "steven king": "Horror",
     "rudyard kipling": "Adventure",
-    "issac asimov": "Science Fiction",
+    "isaac asimov": "Science Fiction",
     "suzanne collins": "YA Fiction"
 }
 
@@ -58,6 +58,9 @@ def findAuthorWithMostBooks(books):
         else:
             dictionary[book.author] += 1
     maxNumberOfBooks = max(dictionary.values())
+    minNumberOfBooks = max(dictionary.values())
+    if maxNumberOfBooks == minNumberOfBooks:
+
     for author in dictionary:
         if dictionary[author] == maxNumberOfBooks:
             return author
@@ -71,10 +74,11 @@ def findOldestBook(books):
     neededBook = books[0]
     oldestBook = parser.parse("12/31/2500")
     for book in books:
-        currentDate = parser.parse(book.dateOfPublication)
-        if currentDate < oldestBook:
-            oldestBook = currentDate
-            neededBook = book
+        if book.author == mostBooksAuthor:
+            currentDate = parser.parse(book.dateOfPublication)
+            if currentDate < oldestBook:
+                oldestBook = currentDate
+                neededBook = book
     return neededBook
 
 
