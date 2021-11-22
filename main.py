@@ -16,19 +16,24 @@ class Book:
         self.author = author
 
 
-splitInputByBook = []
-print("Enter books formatted as Title,Date,Author,Length with date formatted as mm/dd/yyyy")
-while True:
-    userInput = input()
-    splitInputByBook.append(userInput)
-    if userInput == "":
-        splitInputByBook.pop()
-        break
+def getInput():
+    splitInputByBook = []
+    print("Enter books formatted as Title,Date,Author,Length with date formatted as mm/dd/yyyy or mm-dd-yyyy")
+    while True:
+        userInput = input()
+        splitInputByBook.append(userInput)
+        if userInput == "":
+            splitInputByBook.pop()
+            break
+    return splitInputByBook
+
+
+splitInputByBook = getInput()
 
 
 def parseInput(userInput):
     if userInput == None or len(userInput) == 0:
-        raise ValueError("Invalid Input")
+        raise ValueError("Invalid Input") from None
     else:
         booksArray = []
         for book in userInput:
@@ -36,9 +41,20 @@ def parseInput(userInput):
             if len(tempList) == 4:
                 booksArray.append(tempList)
         if len(booksArray) == 0:
-            raise ValueError("Invalid Input")
+            raise ValueError(
+                "Invalid Input: Book must be formatted as title,date,author,length")
         booksArrayByDetails = []
         for book in booksArray:
+            try:
+                book[1] = parser.parse(book[1])
+            except:
+                raise ValueError(
+                    "Date must be formatted in mm/dd/yyyy or mm-dd-yyyy") from None
+            try:
+                book[3] = int(book[3])
+            except ValueError:
+                raise ValueError(
+                    "Invalid Input: Number of pages must be a valid number") from None
             booksArrayByDetails.append(
                 Book(book[0], book[1], book[2].lower(), book[3]))
         return booksArrayByDetails
@@ -74,7 +90,7 @@ def findOldestBook(books):
     neededBook = books[0]
     oldestBook = parser.parse("12/31/2500")
     for book in books:
-        currentDate = parser.parse(book.dateOfPublication)
+        currentDate = book.dateOfPublication
         if currentDate < oldestBook:
             oldestBook = currentDate
             neededBook = book
@@ -83,6 +99,10 @@ def findOldestBook(books):
 
 neededBook = findOldestBook(mostBooksAuthorObjects)
 
-genre = authors[neededBook.author.lower()]
+try:
+    genre = authors[neededBook.author]
+except KeyError as e:
+    raise KeyError(
+        f"Sorry but {e} is not in the given list of authors") from None
 
 print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
