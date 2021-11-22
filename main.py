@@ -24,14 +24,12 @@ while True:
     if userInput == "":
         splitInputByBook.pop()
         break
-print("User input:", splitInputByBook)
 
 
 def parseInput(userInput):
     if userInput == None or len(userInput) == 0:
         raise ValueError("Invalid Input")
     else:
-        #booksArray = filter(lambda book: book.split(","),splitInputByBook)
         booksArray = []
         for book in userInput:
             tempList = book.split(",")
@@ -42,12 +40,11 @@ def parseInput(userInput):
         booksArrayByDetails = []
         for book in booksArray:
             booksArrayByDetails.append(
-                Book(book[0], book[1], book[2], book[3]))
+                Book(book[0], book[1], book[2].lower(), book[3]))
         return booksArrayByDetails
 
 
 books = parseInput(splitInputByBook)
-print(books)
 
 
 def findAuthorWithMostBooks(books):
@@ -58,32 +55,34 @@ def findAuthorWithMostBooks(books):
         else:
             dictionary[book.author] += 1
     maxNumberOfBooks = max(dictionary.values())
-    minNumberOfBooks = max(dictionary.values())
-    if maxNumberOfBooks == minNumberOfBooks:
-
+    mostBooksAuthorsList = []
     for author in dictionary:
         if dictionary[author] == maxNumberOfBooks:
-            return author
+            mostBooksAuthorsList.append(author)
+    mostBooksAuthorObjects = []
+    for author in mostBooksAuthorsList:
+        for book in books:
+            if book.author == author:
+                mostBooksAuthorObjects.append(book)
+    return mostBooksAuthorObjects
 
 
-mostBooksAuthor = findAuthorWithMostBooks(books)
-print(mostBooksAuthor, "type:", type(mostBooksAuthor))
+mostBooksAuthorObjects = findAuthorWithMostBooks(books)
 
 
 def findOldestBook(books):
     neededBook = books[0]
     oldestBook = parser.parse("12/31/2500")
     for book in books:
-        if book.author == mostBooksAuthor:
-            currentDate = parser.parse(book.dateOfPublication)
-            if currentDate < oldestBook:
-                oldestBook = currentDate
-                neededBook = book
+        currentDate = parser.parse(book.dateOfPublication)
+        if currentDate < oldestBook:
+            oldestBook = currentDate
+            neededBook = book
     return neededBook
 
 
-neededBook = findOldestBook(books)
+neededBook = findOldestBook(mostBooksAuthorObjects)
 
-genre = authors[mostBooksAuthor.lower()]
+genre = authors[neededBook.author.lower()]
 
-print(f"{neededBook.title}, written by {genre} writer {neededBook.author} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
+print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
