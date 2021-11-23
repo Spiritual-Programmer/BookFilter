@@ -1,4 +1,5 @@
 from dateutil import parser
+from datetime import datetime
 
 authors = {
     "steven king": "Horror",
@@ -89,7 +90,7 @@ def getGenre():
         raise KeyError(
             f"Sorry but {e} is not in the given list of authors") from None
 
-    print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
+    print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication.strftime('%m/%d/%Y')} is {neededBook.numberOfPages} pages long")
 
 #Calling Functions
 splitInputByBook = getInput()
