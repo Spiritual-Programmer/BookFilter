@@ -7,14 +7,12 @@ authors = {
     "suzanne collins": "YA Fiction"
 }
 
-
 class Book:
     def __init__(self, title, dateOfPublication, author, numberOfPages):
         self.title = title
         self.dateOfPublication = dateOfPublication
         self.numberOfPages = numberOfPages
         self.author = author
-
 
 def getInput():
     splitInputByBook = []
@@ -26,10 +24,6 @@ def getInput():
             splitInputByBook.pop()
             break
     return splitInputByBook
-
-
-splitInputByBook = getInput()
-
 
 def parseInput(userInput):
     if userInput == None or len(userInput) == 0:
@@ -59,10 +53,6 @@ def parseInput(userInput):
                 Book(book[0], book[1], book[2].lower(), book[3]))
         return booksArrayByDetails
 
-
-books = parseInput(splitInputByBook)
-
-
 def findAuthorWithMostBooks(books):
     dictionary = {}
     for book in books:
@@ -82,10 +72,6 @@ def findAuthorWithMostBooks(books):
                 mostBooksAuthorObjects.append(book)
     return mostBooksAuthorObjects
 
-
-mostBooksAuthorObjects = findAuthorWithMostBooks(books)
-
-
 def findOldestBook(books):
     neededBook = books[0]
     oldestBook = parser.parse("12/31/2500")
@@ -96,13 +82,18 @@ def findOldestBook(books):
             neededBook = book
     return neededBook
 
+def getGenre():
+    try:
+        genre = authors[neededBook.author]
+    except KeyError as e:
+        raise KeyError(
+            f"Sorry but {e} is not in the given list of authors") from None
 
+    print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
+
+#Calling Functions
+splitInputByBook = getInput()
+books = parseInput(splitInputByBook)
+mostBooksAuthorObjects = findAuthorWithMostBooks(books)
 neededBook = findOldestBook(mostBooksAuthorObjects)
-
-try:
-    genre = authors[neededBook.author]
-except KeyError as e:
-    raise KeyError(
-        f"Sorry but {e} is not in the given list of authors") from None
-
-print(f"{neededBook.title}, written by {genre} writer {neededBook.author.title()} on {neededBook.dateOfPublication} is {neededBook.numberOfPages} pages long")
+getGenre()
